@@ -1,0 +1,26 @@
+#!/bin/bash
+# ==============================================
+# Mx DNS - Herramientas de DNS
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx DNS - Herramientas DNS           ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-dns <dominio> [tipo]${NC}"
+    echo -e "${YELLOW}[!] Tipos: A, AAAA, MX, NS, TXT, ANY${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-dns google.com A${NC}"
+    exit 1
+fi
+
+TYPE=${2:-"ANY"}
+echo -e "${GREEN}[+] Consultando $1 para $TYPE${NC}"
+dig "$1" "$TYPE"
