@@ -1,0 +1,35 @@
+#!/bin/bash
+# ==============================================
+# Mx Nmap Scanner - Escaneo avanzado
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Nmap Scanner                     ║"
+echo "║         Escaneo de puertos y servicios      ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-nmap <IP> [opciones]${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-nmap 192.168.1.1 -sV${NC}"
+    echo -e "${YELLOW}[!] Opciones comunes:${NC}"
+    echo "  -sV    Detectar versiones"
+    echo "  -p-    Todos los puertos"
+    echo "  -A     Escaneo agresivo"
+    exit 1
+fi
+
+if ! command -v nmap &> /dev/null; then
+    echo -e "${RED}[!] Nmap no instalado${NC}"
+    echo -e "${YELLOW}[!] Instalando...${NC}"
+    sudo apt install -y nmap
+fi
+
+echo -e "${GREEN}[+] Escaneando: $1${NC}"
+nmap "$@"
