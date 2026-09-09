@@ -1,0 +1,38 @@
+#!/bin/bash
+# ==============================================
+# Mx WiFi - Herramientas de redes WiFi
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx WiFi - Herramientas WiFi         ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+case "$1" in
+    scan)
+        echo -e "${GREEN}[+] Escaneando redes WiFi...${NC}"
+        if command -v nmcli &> /dev/null; then
+            nmcli dev wifi list
+        else
+            echo -e "${YELLOW}[!] Instalando nmcli...${NC}"
+            sudo apt install -y network-manager
+            nmcli dev wifi list
+        fi
+        ;;
+    info)
+        echo -e "${GREEN}[+] Información de WiFi:${NC}"
+        iwconfig 2>/dev/null | grep -E "ESSID|Mode|Frequency|Quality|Signal"
+        ;;
+    *)
+        echo -e "${YELLOW}[!] Comandos disponibles:${NC}"
+        echo "  scan  - Escanear redes WiFi"
+        echo "  info  - Información de conexión actual"
+        echo -e "${YELLOW}[!] Ejemplo: mx-wifi scan${NC}"
+        ;;
+esac
