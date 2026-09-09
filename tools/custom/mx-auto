@@ -1,0 +1,46 @@
+#!/bin/bash
+# ==============================================
+# Mx Auto - Automatización de ataques
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Auto - Automatización            ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-auto <IP>${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-auto 192.168.1.1${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}[+] Iniciando escaneo automático de $1...${NC}"
+
+# Paso 1: Ping
+echo -e "${YELLOW}[*] Paso 1: Verificando conectividad...${NC}"
+if ! ping -c 1 "$1" &> /dev/null; then
+    echo -e "${RED}[!] Host no responde${NC}"
+    exit 1
+fi
+
+# Paso 2: Escaneo de puertos
+echo -e "${YELLOW}[*] Paso 2: Escaneando puertos comunes...${NC}"
+nmap -p 22,80,443,3306,8080 "$1"
+
+# Paso 3: Detectar servicios
+echo -e "${YELLOW}[*] Paso 3: Detectando servicios...${NC}"
+nmap -sV -p 22,80,443 "$1"
+
+# Paso 4: Escaneo de directorios (si hay web)
+echo -e "${YELLOW}[*] Paso 4: Escaneando directorios web...${NC}"
+if command -v dirb &> /dev/null; then
+    dirb "http://$1" /usr/share/wordlists/dirb/common.txt
+fi
+
+echo -e "${GREEN}[✓] Escaneo automático completado${NC}"
