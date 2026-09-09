@@ -1,0 +1,41 @@
+#!/bin/bash
+# ==============================================
+# Mx Info - Recolección de información
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Info - Recolección de Info       ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-info <dominio/IP>${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-info google.com${NC}"
+    exit 1
+fi
+
+echo -e "${CYAN}[+] Información de $1:${NC}"
+echo ""
+
+# WHOIS
+echo -e "${GREEN}[+] WHOIS:${NC}"
+whois "$1" | head -n 20
+
+# DNS
+echo -e "\n${GREEN}[+] DNS:${NC}"
+dig "$1" ANY +short
+
+# IP
+echo -e "\n${GREEN}[+] IP:${NC}"
+ping -c 1 "$1" | head -n 1
+
+# Puertos comunes
+echo -e "\n${GREEN}[+] Puertos abiertos comunes:${NC}"
+nc -zv "$1" 22 80 443 3306 8080 2>&1 | grep succeeded
