@@ -1,0 +1,35 @@
+#!/bin/bash
+# ==============================================
+# Mx Backup - Backup de configuraciones
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Backup - Backup de Config        ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+BACKUP_DIR="$HOME/mx-backup-$(date +%Y%m%d)"
+mkdir -p "$BACKUP_DIR"
+
+echo -e "${GREEN}[+] Creando backup en $BACKUP_DIR${NC}"
+
+# Backup de configuración
+echo -e "${YELLOW}[*] Backup de .zshrc${NC}"
+cp ~/.zshrc "$BACKUP_DIR/" 2>/dev/null
+
+echo -e "${YELLOW}[*] Backup de .bashrc${NC}"
+cp ~/.bashrc "$BACKUP_DIR/" 2>/dev/null
+
+echo -e "${YELLOW}[*] Backup de configuraciones Mx${NC}"
+cp -r ~/.config/mx-emulator "$BACKUP_DIR/" 2>/dev/null
+
+echo -e "${YELLOW}[*] Backup de herramientas${NC}"
+cp -r ~/.local/share/mx-emulator "$BACKUP_DIR/" 2>/dev/null
+
+echo -e "${GREEN}[✓] Backup completado en $BACKUP_DIR${NC}"
