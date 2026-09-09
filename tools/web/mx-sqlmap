@@ -1,0 +1,35 @@
+#!/bin/bash
+# ==============================================
+# Mx SQLMap - Inyección SQL automatizada
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx SQLMap - Inyección SQL           ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if ! command -v sqlmap &> /dev/null; then
+    echo -e "${RED}[!] SQLMap no instalado${NC}"
+    echo -e "${YELLOW}[!] Instalando...${NC}"
+    sudo apt install -y sqlmap
+fi
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-sqlmap <URL> [opciones]${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-sqlmap http://target.com/page?id=1${NC}"
+    echo -e "${YELLOW}[!] Opciones comunes:${NC}"
+    echo "  --dbs          - Listar bases de datos"
+    echo "  --tables       - Listar tablas"
+    echo "  --dump         - Extraer datos"
+    echo "  --batch        - Automatizar respuestas"
+    exit 1
+fi
+
+echo -e "${GREEN}[+] Analizando $1...${NC}"
+sqlmap -u "$1" --random-agent --batch "${@:2}"
