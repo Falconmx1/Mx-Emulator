@@ -1,0 +1,30 @@
+#!/bin/bash
+# ==============================================
+# Mx Clean - Limpieza del sistema
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Clean - Limpieza del Sistema     ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+echo -e "${YELLOW}[!] Limpiando caché...${NC}"
+sudo apt clean
+sudo apt autoclean
+
+echo -e "${YELLOW}[!] Eliminando paquetes innecesarios...${NC}"
+sudo apt autoremove -y
+
+echo -e "${YELLOW}[!] Eliminando logs viejos...${NC}"
+sudo journalctl --vacuum-time=7d
+
+echo -e "${YELLOW}[!] Eliminando archivos temporales...${NC}"
+rm -rf /tmp/* 2>/dev/null
+
+echo -e "${GREEN}[✓] Limpieza completada${NC}"
