@@ -1,0 +1,48 @@
+#!/bin/bash
+# ==============================================
+# Mx Aircrack - Suite de auditoría WiFi
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Aircrack - Auditoría WiFi        ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if ! command -v aircrack-ng &> /dev/null; then
+    echo -e "${RED}[!] Aircrack-ng no instalado${NC}"
+    echo -e "${YELLOW}[!] Instalando...${NC}"
+    sudo apt install -y aircrack-ng
+fi
+
+case "$1" in
+    start)
+        echo -e "${GREEN}[+] Iniciando monitor en $2...${NC}"
+        sudo airmon-ng start "$2"
+        ;;
+    stop)
+        echo -e "${GREEN}[+] Deteniendo monitor...${NC}"
+        sudo airmon-ng stop "$2"
+        ;;
+    scan)
+        echo -e "${GREEN}[+] Escaneando redes...${NC}"
+        sudo airodump-ng "$2"
+        ;;
+    crack)
+        echo -e "${GREEN}[+] Crackeando WPA...${NC}"
+        aircrack-ng -w "${3:-/usr/share/wordlists/rockyou.txt}" "$2"
+        ;;
+    *)
+        echo -e "${YELLOW}[!] Comandos disponibles:${NC}"
+        echo "  start <interface> - Iniciar modo monitor"
+        echo "  stop <interface>  - Detener modo monitor"
+        echo "  scan <interface>  - Escanear redes"
+        echo "  crack <cap>       - Crackear WPA con wordlist"
+        echo -e "${YELLOW}[!] Ejemplo: mx-aircrack start wlan0${NC}"
+        ;;
+esac
