@@ -1,0 +1,36 @@
+#!/bin/bash
+# ==============================================
+# Mx John - Cracker de contraseñas
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx John - Cracker de Hashes         ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if ! command -v john &> /dev/null; then
+    echo -e "${RED}[!] John no instalado${NC}"
+    echo -e "${YELLOW}[!] Instalando...${NC}"
+    sudo apt install -y john
+fi
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-john <hashfile> [wordlist]${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-john hashes.txt${NC}"
+    exit 1
+fi
+
+WORDLIST=${2:-"/usr/share/wordlists/rockyou.txt"}
+if [ ! -f "$WORDLIST" ]; then
+    echo -e "${YELLOW}[!] Wordlist no encontrada, usando modo incremental${NC}"
+    john "$1"
+else
+    echo -e "${GREEN}[+] Usando wordlist: $WORDLIST${NC}"
+    john --wordlist="$WORDLIST" "$1"
+fi
