@@ -1,0 +1,31 @@
+#!/bin/bash
+# ==============================================
+# Mx Masscan - Escaneo masivo ultrarrápido
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Masscan - Escaneo Masivo         ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-masscan <IP/CIDR> [puertos]${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-masscan 192.168.1.0/24 80,443,8080${NC}"
+    exit 1
+fi
+
+if ! command -v masscan &> /dev/null; then
+    echo -e "${RED}[!] Masscan no instalado${NC}"
+    echo -e "${YELLOW}[!] Instalando...${NC}"
+    sudo apt install -y masscan
+fi
+
+PORTS=${2:-"1-65535"}
+echo -e "${GREEN}[+] Escaneando $1 en puertos $PORTS${NC}"
+sudo masscan "$1" -p"$PORTS" --rate=10000
