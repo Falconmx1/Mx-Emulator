@@ -1,0 +1,43 @@
+#!/bin/bash
+# ==============================================
+# Mx Bypass - Bypass de seguridad
+# ==============================================
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Bypass - Bypass de Seguridad     ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[!] Uso: mx-bypass <URL>${NC}"
+    echo -e "${YELLOW}[!] Ejemplo: mx-bypass http://target.com/admin${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}[+] Probando bypass en $1...${NC}"
+
+# Bypass comunes
+BYPASS=(
+    "admin"
+    "administrator"
+    "login"
+    "wp-admin"
+    "cpanel"
+    "phpmyadmin"
+)
+
+for dir in "${BYPASS[@]}"; do
+    URL="$1/$dir"
+    STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+    if [ "$STATUS" = "200" ] || [ "$STATUS" = "302" ]; then
+        echo -e "${RED}[!] Encontrado: $URL (HTTP $STATUS)${NC}"
+    fi
+done
+
+echo -e "${GREEN}[+] Bypass completado${NC}"
