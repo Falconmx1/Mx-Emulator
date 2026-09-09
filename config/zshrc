@@ -1,0 +1,161 @@
+# ==============================================
+# Mx Emulator - Zsh Configuration
+# Root Terminal estilo Kali en rojo
+# Versión: 1.0.0
+# ==============================================
+
+# --- Plugins y carga ---
+autoload -Uz compinit
+compinit
+
+# --- Historial ---
+HISTFILE=~/.zsh_history
+HISTSIZE=5000
+SAVEHIST=5000
+
+# Opciones de historial
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt SHARE_HISTORY
+setopt EXTENDED_HISTORY
+
+# --- Comportamiento ---
+setopt AUTO_CD          # cd sin escribir cd
+setopt AUTO_PUSHD       # pushd automático
+setopt PUSHD_IGNORE_DUPS
+setopt INTERACTIVE_COMMENTS
+
+# --- Colores ---
+autoload -Uz colors
+colors
+
+# --- Prompt ROJO estilo Kali ---
+# Formato: 
+# ┌─[root@Mx]─[~/directorio]
+# └─# 
+PROMPT='%F{red}┌─[%F{red}root@Mx%F{red}]─[%~]%f
+%F{red}└─%F{red}#%f '
+
+# Prompt para comandos multilínea
+PROMPT2='%F{red}└─%F{red}→%f '
+
+# Prompt para selección
+PROMPT3='%F{red}└─%F{red}?%f '
+
+# --- Mensaje de bienvenida ---
+echo -e "\033[31m"
+echo "╔══════════════════════════════════════════════╗"
+echo "║         Mx Emulator - Root Terminal         ║"
+echo "║         Modo: Hacking Ético                 ║"
+echo "║         Version: 1.0.0                      ║"
+echo "╚══════════════════════════════════════════════╝"
+echo -e "\033[0m"
+
+# --- Alias útiles ---
+# Navegación
+alias ll='ls -la --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+
+# Sistema
+alias update='sudo apt update && sudo apt upgrade -y'
+alias clean='sudo apt autoremove -y && sudo apt autoclean'
+alias reload='source ~/.zshrc'
+
+# Red
+alias myip='curl -s ifconfig.me'
+alias ping='ping -c 4'
+
+# Herramientas Mx
+alias mx-scan='mx-scan'
+alias mx-help='list-tools'
+
+# --- Variables de entorno ---
+export MX_HOME=~/.local/share/mx-emulator
+export MX_TOOLS=$MX_HOME/tools
+export MX_SCRIPTS=$MX_HOME/scripts
+export PATH=$MX_TOOLS:$MX_SCRIPTS:$PATH
+
+# --- Funciones personalizadas ---
+
+# Listar herramientas instaladas
+list-tools() {
+    echo -e "\033[31m╔══════════════════════════════════════════════╗\033[0m"
+    echo -e "\033[31m║         HERRAMIENTAS DISPONIBLES           ║\033[0m"
+    echo -e "\033[31m╚══════════════════════════════════════════════╝\033[0m"
+    
+    if [ -d "$MX_TOOLS" ]; then
+        for tool in $(ls -1 $MX_TOOLS 2>/dev/null); do
+            if [ -x "$MX_TOOLS/$tool" ]; then
+                echo -e "\033[32m[✓]\033[0m $tool"
+            else
+                echo -e "\033[33m[ ]\033[0m $tool"
+            fi
+        done
+    else
+        echo -e "\033[31m[!] No hay herramientas instaladas\033[0m"
+        echo -e "\033[33m[!] Ejecuta: install-tool <nombre>\033[0m"
+    fi
+}
+
+# Instalar herramienta (extensible)
+install-tool() {
+    if [ -z "$1" ]; then
+        echo -e "\033[31m[!] Uso: install-tool <nombre>\033[0m"
+        echo -e "\033[33m[!] Herramientas disponibles: nmap, sqlmap, hydra\033[0m"
+        return 1
+    fi
+    
+    echo -e "\033[31m[+] Instalando $1...\033[0m"
+    
+    case $1 in
+        nmap)
+            sudo apt install -y nmap
+            ;;
+        sqlmap)
+            sudo apt install -y sqlmap
+            ;;
+        hydra)
+            sudo apt install -y hydra
+            ;;
+        *)
+            echo -e "\033[31m[!] Herramienta $1 no soportada\033[0m"
+            return 1
+            ;;
+    esac
+    
+    echo -e "\033[32m[✓] $1 instalado correctamente\033[0m"
+}
+
+# Escaneo rápido
+quick-scan() {
+    if [ -z "$1" ]; then
+        echo -e "\033[31m[!] Uso: quick-scan <IP> \033[0m"
+        echo -e "\033[33m[!] Ejemplo: quick-scan 192.168.1.1\033[0m"
+        return 1
+    fi
+    
+    echo -e "\033[31m[+] Escaneando $1...\033[0m"
+    if command -v nmap &> /dev/null; then
+        nmap -sV -p- --min-rate 1000 $1
+    else
+        echo -e "\033[31m[!] Nmap no instalado\033[0m"
+    fi
+}
+
+# --- Keybindings (atajos) ---
+# Ctrl+R para buscar en historial
+bindkey '^R' history-incremental-search-backward
+
+# Flecha arriba/abajo para historial
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+
+# --- Final ---
+echo -e "\033[32m[✓] Mx Emulator cargado correctamente\033[0m"
+echo -e "\033[33m[!] Escribe 'list-tools' para ver herramientas\033[0m"
+echo -e "\033[33m[!] Escribe 'install-tool <nombre>' para instalar\033[0m"
